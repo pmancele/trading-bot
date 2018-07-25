@@ -1,8 +1,3 @@
-"""
-Shows basic usage of the Gmail API.
-
-Lists the user's Gmail labels.
-"""
 from __future__ import print_function
 from apiclient.discovery import build
 from httplib2 import Http
@@ -40,7 +35,7 @@ def executeOrder(messageSnippet):
     elif 'SELL' in messageSnippet:
         words = messageSnippet.split(" ")
         print("SELLING {}".format(words[6]))
-                symbol = words[6] + 'USD'
+        symbol = words[6] + 'USD'
         print("Current price is {}".format(public_client.ticker(symbol)['last_price']))
         print()
 
@@ -57,11 +52,5 @@ if __name__ == '__main__':
             print("Placing order ...")
             executeOrder(message['snippet'])
 
-
         if 'Label_3666501887904461799' in message['labelIds']:
             print("Found alert already processed: {}".format(message['snippet']))
-        
-        #message = service.users().messages().modify(userId='me', id=message['id'],
-                                                    #body=CreateMsgLabels()).execute()
-        #print(message['snippet'])
-        #print(message['labelIds'])
