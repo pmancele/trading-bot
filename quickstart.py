@@ -33,22 +33,22 @@ def executeOrder(messageSnippet):
     if 'BUY' in messageSnippet:
         words = messageSnippet.split(" ")
         print("BUYING {}".format(words[6]))
-        print("Current price is {}".format(public_client.ticker('ethusd')['last_price']))
+        symbol = words[6] + 'USD'
+        print("Current price is {}".format(public_client.ticker(symbol)['last_price']))
         print()
 
     elif 'SELL' in messageSnippet:
         words = messageSnippet.split(" ")
         print("SELLING {}".format(words[6]))
+                symbol = words[6] + 'USD'
+        print("Current price is {}".format(public_client.ticker(symbol)['last_price']))
         print()
 
 if __name__ == '__main__':
     # Get last messages (1 day)
     query = service.users().messages().list(userId='me', q='from:noreply@tradingview.com + newer_than:1d').execute()
 
-    #print(results)
-    #print(query)
-    print(public_client.ticker()['last_price'])
-
+    # process mails if they are new and not already processed
     messages = query.get('messages')
     for message in messages:
         message = service.users().messages().get(userId='me', id=message['id']).execute()
