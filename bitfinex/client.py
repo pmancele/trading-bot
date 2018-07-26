@@ -58,9 +58,9 @@ class BaseClient(object):
         if 'proxies' not in kwargs:
             kwargs['proxies'] = self.proxydict
             
-        #print 'Response Code: ' + str(response.status_code) 
-        #print 'Response Header: ' + str(response.headers)
-        #print 'Response Content: '+ str(response.content)
+        #print ('Response Code: ' + str(response.status_code)) 
+        #print ('Response Header: ' + str(response.headers))
+        #print ('Response Content: '+ str(response.content))
 
         # Check for error, raising an exception if appropriate.
         response.raise_for_status()
@@ -116,8 +116,8 @@ class Trading(Public):
         """
         super(Trading, self).__init__(
                  key=key, secret=secret, *args, **kwargs)
-        self.key = key
-        self.secret = secret
+        self.key = key.encode()
+        self.secret = secret.encode()
 
     def _get_nonce(self):
         """
@@ -160,13 +160,13 @@ class Trading(Public):
         key = self.key
         secret = self.secret
         payload_json = json.dumps(data)
-        payload = base64.b64encode(payload_json)
+        payload = base64.b64encode(payload_json.encode())
         sig = hmac.new(secret, payload, hashlib.sha384)
         sig = sig.hexdigest()
 
         headers = {
-           'X-BFX-APIKEY' : key,
-           'X-BFX-PAYLOAD' : payload,
+           'X-BFX-APIKEY' : key.decode(),
+           'X-BFX-PAYLOAD' : payload.decode(),
            'X-BFX-SIGNATURE' : sig
            }
         kwargs['headers'] = headers
@@ -200,7 +200,7 @@ class Trading(Public):
         return self._post("/v1/balances",return_json=True)
     
     def new_order(self, amount=0.01, price=1.11, side='buy',
-                  order_type='limit', symbol='btcusd'):
+                  order_type='exchange limit', symbol='btcusd'):
         """
         enters a new order onto the orderbook
         
@@ -222,6 +222,7 @@ class Trading(Public):
                 'side':str(side),
                 'type':order_type
                 }
+        #print(data)
         return self._post("/v1/order/new", data=data, return_json=True)
 
     def orders(self):
